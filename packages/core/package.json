@@ -1,0 +1,90 @@
+{
+  "name": "@hakit/core",
+  "version": "5.1.1",
+  "private": false,
+  "type": "module",
+  "keywords": [
+    "react",
+    "component",
+    "library",
+    "api",
+    "ha-component-kit",
+    "@hakit/core",
+    "@hakit/components",
+    "dashboard",
+    "custom"
+  ],
+  "bin": {
+    "hakit-sync-types": "./dist/sync/cli/cli.js"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "description": "A collection of React hooks and helpers for building custom dashboards and applications.",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/es/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./sync": {
+      "types": "./dist/sync/node/types/index.d.ts",
+      "import": "./dist/sync/node/index.cjs",
+      "require": "./dist/sync/node/index.cjs"
+    }
+  },
+  "author": "Shannon Hochkins <mail@shannonhochkins.com>",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shannonhochkins/ha-component-kit",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
+  },
+  "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "rimraf ./dist",
+    "postbuild": "npm run prettier",
+    "build": "npm run build:core",
+    "build:core": "cross-env NODE_ENV=production vite build",
+    "watch:build": "cross-env NODE_ENV=production vite build --watch",
+    "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
+    "test": "cross-env NODE_ENV=test jest --rootDir=src",
+    "prerelease": "npm run build",
+    "release": "npm publish",
+    "release:canary": "npm run build && npm publish --tag canary",
+    "clean": "rimraf node_modules dist"
+  },
+  "peerDependencies": {
+    "@emotion/react": ">=11.x",
+    "@emotion/styled": ">=11.x",
+    "@iconify/react": ">=5.x",
+    "lodash": ">=4.x",
+    "prettier": ">=3.4.2",
+    "react": ">=19.x",
+    "react-dom": ">=19.x",
+    "use-debounce": ">=9.x",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.3.78",
+    "cross-env": "^7.0.3",
+    "prettier": "^3.4.2",
+    "rimraf": "^5.0.0",
+    "rollup-plugin-node-externals": "^7.1.2"
+  }
+}

@@ -1,0 +1,39 @@
+import { Meta, Source } from '@storybook/addon-docs/blocks';
+
+<Meta title="INTRODUCTION/Deploying" />
+
+## Deploying to Home Assistant
+
+Home Assistant is bundled with a http server, specifically under `config/www` you can provide anything into this section and access via the `/local` pathname, which we can utilize to host our new dashboard, we do need to gather/setup some credentials to get going:
+
+## Prerequisites
+
+1. Setup project using the [getting started guide](/docs/introduction-getting-started--docs)
+2. SSH Credentials setup - [Instructions](/docs/introduction-deploying-ssh-credentials--docs)
+
+You should be able to run `npm run build && npm run deploy` and your dashboard should be available, a link will be logged in the terminal.
+
+Now you should be able to access your dashboard (assuming you haven't changed the `VITE_FOLDER_NAME` in the environment variables):
+
+[http://homeassistant.local:8123/local/ha-dashboard/index.html](http://homeassistant.local:8123/local/ha-dashboard/index.html)
+
+or with Nabucasa:
+
+[https://YOUR_NABU_CASA_ID.ui.nabu.casa/local/ha-dashboard/index.html](https://YOUR_NABU_CASA_ID.ui.nabu.casa/local/ha-dashboard/index.html)
+
+## IMPORTANT
+
+Important Security Considerations for HA_TOKEN Usage with `HassConnect`
+
+The `hassToken` prop provided to `HassConnect` is highly convenient for local development and is required for executing the `npm run sync` command. However, it is strongly discouraged to use this token in production environments or on Home Assistant servers with remote access enabled.
+
+#### Security Risks
+- **Public Exposure**: The Home Assistant `www` directory is not protected by authentication. Any file placed in this directory will be accessible over the internet if someone knows its path, potentially exposing both your dashboard and the HA Token.
+- **Production Build Recommendations**: For production builds, especially when publishing files to the `www` folder, it is recommended to omit the token to prevent unauthorized access.
+- **User Authentication**: When the token is not used, users will be prompted to log in once per machine. This additional step serves as a valuable security measure by ensuring that only authenticated users can access your Home Assistant dashboard.
+
+For optimal security, restrict the use of the HA Token to local development environments only, and always enforce authentication for production deployments.
+
+## Home Assistant Addon
+
+If you want to use the HAKIT addon for home assistant so you can access your custom dashboard from your home assistant sidebar, you can install and follow the [setup steps here](https://github.com/shannonhochkins/ha-component-kit/blob/master/ADDON.md)

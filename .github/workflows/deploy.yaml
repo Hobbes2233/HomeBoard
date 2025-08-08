@@ -1,0 +1,47 @@
+name: Build and Publish storybook to GitHub Pages
+
+on:
+  push:
+    branches:
+      - "master"
+jobs:
+  deploy:
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.build-publish.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      # Step to checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      # Step to set up Node.js 20
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Step to install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Step to build for Storybook
+      - name: Build for Storybook
+        run: NODE_ENV=production npm run build:for:storybook
+
+      # Step to build Storybook
+      - name: Build Storybook
+        run: npm run build:storybook && echo "Build completed."
+
+      # Step to deploy to GitHub Pages
+      - name: Deploy Storybook to GitHub Pages
+        uses: bitovi/github-actions-react-to-ghp@v1.2.4
+        with:
+          checkout: false            # Skip checkout since it’s already done
+          install_command: ''        # Skip installation since it's already done
+          build_command: ''          # Skip build since it's already done
+          path: storybook-static     # Specify the output directory for deployment

@@ -1,0 +1,2 @@
+# Roadmap
+I'm currently focusing on building a dynamic UI to create dashboards with a drag and drop style interface, improving flows already available with Home Assistant Lovelace dashboards and ideally something users will love!

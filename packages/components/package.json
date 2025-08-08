@@ -1,0 +1,80 @@
+{
+  "name": "@hakit/components",
+  "type": "module",
+  "version": "5.1.1",
+  "private": false,
+  "keywords": [
+    "react",
+    "component",
+    "library",
+    "api",
+    "ha-component-kit",
+    "@hakit/core",
+    "@hakit/components",
+    "dashboard",
+    "custom"
+  ],
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=16.0.0"
+  },
+  "description": "A series of React components for building custom dashboards and applications",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/es/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "author": "Shannon Hochkins <mail@shannonhochkins.com>",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json",
+    "LICENSE.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shannonhochkins/ha-component-kit",
+    "directory": "packages/components"
+  },
+  "bugs": {
+    "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
+  },
+  "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "rimraf ./dist",
+    "build": "cross-env NODE_ENV=production vite build",
+    "postbuild": "npm run prettier",
+    "watch:build": "cross-env NODE_ENV=production vite build --watch",
+    "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
+    "prerelease": "npm run build",
+    "release": "npm publish",
+    "release:canary": "npm run build && npm publish --tag canary",
+    "test": "cross-env NODE_ENV=test jest --rootDir=src",
+    "clean": "rimraf node_modules dist"
+  },
+  "peerDependencies": {
+    "@emotion/is-prop-valid": ">=1.3.x",
+    "@emotion/react": ">=11.x.x",
+    "@emotion/styled": ">=11.x",
+    "@hakit/core": "^5.1.1",
+    "lodash": ">=4.x",
+    "react": ">=19.x",
+    "react-dom": ">=19.x",
+    "react-error-boundary": "^5.x",
+    "use-debounce": ">=9.x",
+    "zustand": ">=5.x.x"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "rimraf": "^5.0.0",
+    "vite-plugin-svgr": "^4.2.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
+  "rootDir": "./src",
+  "include": ["src", "./src/.d.ts", "../../.d.ts", "./vite-env.d.ts"],
+  "exclude": [
+    "node_modules"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

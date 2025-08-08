@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Components Test</title>
+    <style>
+        /* Inter font (no install needed) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* Base (large type + standard motion) */
+        :root {
+          font-size: 18px; /* Large base */
+          --radius: 18px;
+          --shadow: 0 10px 30px rgba(0,0,0,0.35);
+          --gap: 16px;
+          --focus: 0 0 0 3px rgba(77,163,255,0.35); /* focus ring */
+          --transition-fast: 160ms ease;
+          --transition-med: 280ms ease;
+        }
+
+        html, body, #root {
+          height: 100%;
+        }
+
+        html, body {
+          margin: 0;
+          font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== THEMES (switch by setting data-theme on <html> or <body>) ===== */
+
+        /* 1) Noir (default dark) */
+        :root,
+        [data-theme="noir"] {
+          --bg: #1a1a1a;
+          --surface: #1f1f1f;
+          --surface-2: #232323;
+          --text: #e9e9e9;
+          --muted: #b7b7b7;
+          --border: #2a2a2a;
+          --accent: #4da3ff;
+        }
+
+        /* 2) Slate (dim cool) */
+        [data-theme="slate"] {
+          --bg: #0f1115;
+          --surface: #14161c;
+          --surface-2: #191c23;
+          --text: #e6eaf2;
+          --muted: #a8b0bf;
+          --border: #232735;
+          --accent: #6aa6ff;
+        }
+
+        /* 3) Light (neutral light) */
+        [data-theme="light"] {
+          --bg: #f6f7f9;
+          --surface: #ffffff;
+          --surface-2: #fafafa;
+          --text: #1b1d21;
+          --muted: #5d6169;
+          --border: #e6e8ee;
+          --accent: #3b82f6;
+        }
+
+        /* 4) Warm (cozy dark) */
+        [data-theme="warm"] {
+          --bg: #181614;
+          --surface: #1f1c19;
+          --surface-2: #24201c;
+          --text: #efe9e5;
+          --muted: #b9b0a9;
+          --border: #2a251f;
+          --accent: #ffb578;
+        }
+
+        /* ===== Layout primitives ===== */
+
+        .container {
+          padding: 24px;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(12, 1fr);
+          gap: var(--gap);
+        }
+
+        @media (max-width: 1200px) {
+          .grid { grid-template-columns: repeat(8, 1fr); }
+        }
+        @media (max-width: 800px) {
+          .grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        /* Cards — flatter, Skylight/Hearth style */
+        .card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          box-shadow: var(--shadow);
+          padding: 22px;
+        }
+
+        .card-title {
+          font-weight: 600;
+          font-size: 1.125rem;
+          margin: 0 0 14px 0;
+          color: var(--text);
+        }
+
+        .muted { color: var(--muted); }
+
+        /* Ghost + subtle buttons */
+        .button {
+          height: 46px;
+          padding: 0 16px;
+          border-radius: 14px;
+          border: 1px solid var(--border);
+          background: var(--surface-2);
+          color: var(--text);
+          transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+          cursor: pointer;
+          font-weight: 500;
+        }
+        .button:hover { transform: translateY(-1px); }
+        .button.accent { background: var(--accent); color: #0a0a0a; border-color: transparent; }
+
+        /* Inputs — quiet, roomy */
+        .input {
+          height: 46px;
+          padding: 0 14px;
+          border-radius: 14px;
+          border: 1px solid var(--border);
+          background: var(--surface-2);
+          color: var(--text);
+        }
+        .input::placeholder { color: var(--muted); }
+
+        /* List rows / Settings rows */
+        .row {
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 14px 0;
+          border-bottom: 1px solid var(--border);
+        }
+        .row:last-child { border-bottom: none; }
+
+        /* Calendar polish — flat, touch friendly */
+        .calendar-grid button, .calendar-grid .cell {
+          height: 46px;
+          border-radius: 12px;
+        }
+        .calendar-today {
+          outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+          outline-offset: 2px;
+        }
+        .calendar-selected {
+          background: color-mix(in srgb, var(--accent) 12%, transparent);
+          border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+        }
+
+        /* Photo frame tweaks */
+        .photo-frame img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: calc(var(--radius) - 2px);
+          transition: transform 10s ease; /* Ken Burns (standard motion) */
+        }
+        .photo-frame[data-kenburns="on"] img {
+          transform: scale(1.06);
+        }
+
+        /* Idle overlay */
+        .overlay {
+          position: absolute; inset: 0;
+          display: grid; align-content: start; justify-items: end;
+          padding: 24px;
+          background: linear-gradient(to top, rgba(0,0,0,0.22), rgba(0,0,0,0));
+          color: var(--text);
+          pointer-events: none;
+        }
+
+        /* Utility spans (grid placement examples) */
+        .span-3 { grid-column: span 3; }
+        .span-4 { grid-column: span 4; }
+        .span-6 { grid-column: span 6; }
+        .span-12 { grid-column: span 12; }
+        @media (max-width: 1200px) {
+          .span-6 { grid-column: span 8; }
+          .span-4, .span-3 { grid-column: span 4; }
+        }
+        @media (max-width: 800px) {
+          .span-12, .span-6, .span-4, .span-3 { grid-column: span 4; }
+        }
+
+        /* Custom styles for our components */
+        .time-display {
+          font-size: 2.5rem;
+          font-weight: bold;
+          color: var(--accent);
+          text-align: center;
+          font-family: 'Courier New', monospace;
+          margin: 16px 0;
+        }
+
+        .calendar-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 2px;
+          margin-top: 16px;
+        }
+
+        .calendar-day {
+          height: 46px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 12px;
+          cursor: pointer;
+          color: var(--text);
+          font-size: 0.9rem;
+          transition: background var(--transition-fast), color var(--transition-fast);
+        }
+
+        .calendar-day:hover {
+          background-color: var(--surface-2);
+        }
+
+        .calendar-day.today {
+          outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+          outline-offset: 2px;
+        }
+
+        .todo-item {
+          display: flex;
+          align-items: center;
+          padding: 14px 0;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .todo-item:last-child {
+          border-bottom: none;
+        }
+
+        .todo-checkbox {
+          margin-right: 12px;
+          width: 18px;
+          height: 18px;
+        }
+
+        .todo-text {
+          flex: 1;
+          color: var(--text);
+          font-size: 0.95rem;
+        }
+
+        .todo-text.completed {
+          text-decoration: line-through;
+          color: var(--muted);
+        }
+
+        .photo-slideshow {
+          position: relative;
+          height: 200px;
+          background-color: var(--surface-2);
+          border-radius: calc(var(--radius) - 2px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 16px;
+          border: 1px solid var(--border);
+        }
+
+        .photo-controls {
+          display: flex;
+          gap: 8px;
+          justify-content: center;
+        }
+
+        .photo-button {
+          height: 46px;
+          padding: 0 16px;
+          border-radius: 14px;
+          background: var(--accent);
+          color: #0a0a0a;
+          border: none;
+          cursor: pointer;
+          font-weight: 600;
+          transition: transform var(--transition-fast);
+        }
+
+        .photo-button:hover {
+          transform: translateY(-1px);
+        }
+
+        .sticky-notes-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 12px;
+        }
+
+        .sticky-note {
+          padding: 16px;
+          border-radius: calc(var(--radius) - 2px);
+          min-height: 120px;
+          position: relative;
+          border: 1px solid var(--border);
+          transition: transform var(--transition-fast);
+        }
+
+        .sticky-note:hover {
+          transform: translateY(-1px);
+        }
+
+        .sticky-note.yellow {
+          background-color: #ffeb3b;
+          color: #333;
+        }
+
+        .sticky-note.green {
+          background-color: #4caf50;
+          color: white;
+        }
+
+        .sticky-note.blue {
+          background-color: #2196f3;
+          color: white;
+        }
+
+        .note-title {
+          font-weight: 600;
+          font-size: 0.9rem;
+          margin-bottom: 8px;
+        }
+
+        .note-content {
+          font-size: 0.85rem;
+          line-height: 1.4;
+        }
+
+        .header {
+          text-align: center;
+          margin-bottom: 32px;
+        }
+
+        .header h1 {
+          color: var(--accent);
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin-bottom: 8px;
+          letter-spacing: -0.5px;
+        }
+
+        .header p {
+          color: var(--muted);
+          font-size: 1.1rem;
+          font-weight: 400;
+        }
+
+        .theme-switcher {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          display: flex;
+          gap: 8px;
+          z-index: 1000;
+        }
+
+        .theme-button {
+          height: 36px;
+          padding: 0 12px;
+          border-radius: 8px;
+          border: 1px solid var(--border);
+          background: var(--surface);
+          color: var(--text);
+          cursor: pointer;
+          font-size: 0.8rem;
+          font-weight: 500;
+          transition: background var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .theme-button:hover {
+          background: var(--surface-2);
+          transform: translateY(-1px);
+        }
+
+        .theme-button.active {
+          background: var(--accent);
+          color: #0a0a0a;
+          border-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switcher">
+        <button class="theme-button active" onclick="setTheme('noir')">Noir</button>
+        <button class="theme-button" onclick="setTheme('slate')">Slate</button>
+        <button class="theme-button" onclick="setTheme('light')">Light</button>
+        <button class="theme-button" onclick="setTheme('warm')">Warm</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Dashboard Components Test</h1>
+            <p>Welcome to your personalized dashboard - All components working without Home Assistant!</p>
+        </div>
+
+        <div class="grid">
+            <!-- Time Card -->
+            <div class="card span-3">
+                <div class="card-title">Current Time</div>
+                <div class="time-display" id="current-time">Loading...</div>
+                <div class="muted" style="text-align: center;" id="current-date"></div>
+            </div>
+
+            <!-- Calendar Card -->
+            <div class="card span-6">
+                <div class="card-title">Calendar</div>
+                <div class="muted" style="text-align: center; font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;" id="current-month"></div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendar will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Todo Card -->
+            <div class="card span-3">
+                <div class="card-title">To-Do List</div>
+                <div style="margin-bottom: 16px;">
+                    <input type="text" id="new-todo" placeholder="Add a new task..." class="input" style="width: 70%;">
+                    <button onclick="addTodo()" class="button accent" style="margin-left: 8px;">Add</button>
+                </div>
+                <div id="todo-list">
+                    <div class="todo-item">
+                        <input type="checkbox" class="todo-checkbox" checked>
+                        <span class="todo-text completed">Welcome to your dashboard!</span>
+                    </div>
+                    <div class="todo-item">
+                        <input type="checkbox" class="todo-checkbox">
+                        <span class="todo-text">Add your first task</span>
+                    </div>
+                    <div class="todo-item">
+                        <input type="checkbox" class="todo-checkbox" checked>
+                        <span class="todo-text completed">Explore the components</span>
+                    </div>
+                </div>
+                <div class="muted" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 0.8rem; text-align: center;">
+                    2 of 3 tasks completed
+                </div>
+            </div>
+
+            <!-- Photo Slideshow Card -->
+            <div class="card span-6">
+                <div class="card-title">Photo Slideshow</div>
+                <div class="photo-slideshow">
+                    <div class="muted" style="text-align: center; font-style: italic;">
+                        Photo slideshow component<br>
+                        (Auto-playing with navigation)
+                    </div>
+                </div>
+                <div class="photo-controls">
+                    <button class="photo-button">← Previous</button>
+                    <button class="photo-button" style="background-color: #dc3545;">Pause</button>
+                    <button class="photo-button">Next →</button>
+                </div>
+                <div class="muted" style="text-align: center; font-size: 0.8rem; margin-top: 8px;">
+                    1 of 3
+                </div>
+            </div>
+
+            <!-- Sticky Notes Card (Full Width) -->
+            <div class="card span-12">
+                <div class="card-title">Sticky Notes</div>
+                <div class="sticky-notes-grid">
+                    <div class="sticky-note yellow">
+                        <div class="note-title">Welcome Note</div>
+                        <div class="note-content">Welcome to your new dashboard! You can add notes, manage tasks, view your calendar, and enjoy a photo slideshow.</div>
+                    </div>
+                    <div class="sticky-note green">
+                        <div class="note-title">Quick Tips</div>
+                        <div class="note-content">• Click on calendar dates to select them<br>• Add tasks to your to-do list<br>• Create colorful sticky notes<br>• Navigate through photos</div>
+                    </div>
+                    <div class="sticky-note blue">
+                        <div class="note-title">Ideas</div>
+                        <div class="note-content">New project idea<br>Feature improvements<br>Bug fixes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme switching
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            // Update active button
+            document.querySelectorAll('.theme-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            const dateString = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('current-time').textContent = timeString;
+            document.getElementById('current-date').textContent = dateString;
+        }
+
+        // Initialize calendar
+        function initCalendar() {
+            const now = new Date();
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            document.getElementById('current-month').textContent = 
+                `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+
+            const grid = document.getElementById('calendar-grid');
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // Add day headers
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day';
+                dayHeader.style.fontWeight = '600';
+                dayHeader.style.color = 'var(--muted)';
+                dayHeader.style.fontSize = '0.8rem';
+                dayHeader.textContent = day;
+                grid.appendChild(dayHeader);
+            });
+
+            // Get calendar data
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+
+            // Add empty cells
+            for (let i = 0; i < startingDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day';
+                grid.appendChild(emptyDay);
+            }
+
+            // Add days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                if (day === now.getDate()) {
+                    dayElement.classList.add('today');
+                }
+                dayElement.textContent = day;
+                grid.appendChild(dayElement);
+            }
+        }
+
+        // Todo functionality
+        function addTodo() {
+            const input = document.getElementById('new-todo');
+            const text = input.value.trim();
+            
+            if (text) {
+                const todoList = document.getElementById('todo-list');
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+                todoItem.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox">
+                    <span class="todo-text">${text}</span>
+                `;
+                todoList.appendChild(todoItem);
+                input.value = '';
+            }
+        }
+
+        // Initialize everything
+        updateTime();
+        initCalendar();
+        setInterval(updateTime, 1000);
+
+        // Add enter key support for todo input
+        document.getElementById('new-todo').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+    </script>
+</body>
+</html>
